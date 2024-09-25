@@ -8,26 +8,42 @@ import {
     Image,
     TextInput,
     Text,
-    ActivityIndicator
+    ActivityIndicator,
+    Pressable
 } from 'react-native';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { Entypo, FontAwesome } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker'
+import { useLocalSearchParams } from 'expo-router';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { FIREBASE_STORAGE } from '@/firebaseConfig';
 
 import ScreenHeader from '@/components/common/header/ScreeanHeader'
-import styles from '@/styles/pet-register.style';
-import { Entypo } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker'
-import { FIREBASE_STORAGE } from '@/firebaseConfig';
+import styles from '@/styles/vaccine-register.style';
 import CustomButton from '@/components/common/buttons/CustomButton';
 import useUserStore from '@/services/state/zustand/user-store';
 import usePetStore from '@/services/state/zustand/pet-store';
-import { addPetService } from '@/services/api/pet-service';
+import { addPetService, getPetService, updatePetService } from '@/services/api/pet-service';
 import { updateUserService } from '@/services/api/user-service';
-import { Pet } from '@/utils/types';
+import { Pet, Vaccine } from '@/utils/types';
+import useVaccineStore from '@/services/state/zustand/vaccine-store';
+import { addVaccineService } from '@/services/api/vaccine.service';
 
-const PetRegister = () => {
+const VaccineRegister = () => {
+    const { addVaccine, startAt, endAt } = useVaccineStore()
+    const {
+        pets,
+    } = usePetStore()
+    const { id: pId } = useLocalSearchParams()
+
     const [loading, setLoading] = useState(false);
+    const [showPickerStartedAt, setshowPickerStartedAt] = useState(false);
+    const [startedAt, setStartedAt] = useState(new Date());
+    const [showPickerEndAt, setShowPickerEndAt] = useState(false);
+    const [endsAt, setEndsAt] = useState(new Date());
+
     const {
         name,
         email,
@@ -37,6 +53,8 @@ const PetRegister = () => {
         petsId,
         updateUser: updateUserStore
     } = useUserStore()
+
+
     const {
         addPet: addPetStore,
         name: petName,
@@ -47,21 +65,42 @@ const PetRegister = () => {
         color,
         image: petImage
     } = usePetStore()
+
     const [image, setImage] = useState(petImage ? petImage : '')
 
-    const ResgisterPetSchema = Yup.object().shape({
+    const ResgisterVaccineSchema = Yup.object().shape({
         name: Yup.string()
             .min(2, 'Too Short!')
             .max(20, 'Too Long!')
             .required('Name is required'),
     });
 
+    const toggleDatePicker = () => setshowPickerStartedAt(!showPickerStartedAt)
+    const toggleDatePickerEndsAt = () => setShowPickerEndAt(!showPickerEndAt)
+
+    const onChange = ({ type }: any, selectedDate: any) => {
+        if (type == 'set') {
+            const currentDate = selectedDate
+            setStartedAt(currentDate)
+        } else {
+            toggleDatePicker()
+        }
+    }
+    const onChangeEndsAt = ({ type }: any, selectedDate: any) => {
+        if (type == 'set') {
+            const currentDate = selectedDate
+            setEndsAt(currentDate)
+        } else {
+            toggleDatePickerEndsAt()
+        }
+    }
+
     const uploadImage = async (fileType = 'image', data: any) => {
         try {
             const response = await fetch(image)
             const blob = await response.blob()
 
-            const storageRef = ref(FIREBASE_STORAGE, 'Pets/' + new Date().getTime())
+            const storageRef = ref(FIREBASE_STORAGE, 'Vaccines/' + new Date().getTime())
             const uploadTask = uploadBytesResumable(storageRef, blob)
             uploadTask.on('state_changed',
                 (snapshot) => {
@@ -84,7 +123,8 @@ const PetRegister = () => {
                     // Finally
                     getDownloadURL(uploadTask.snapshot.ref)
                         .then(async (downloadURL) => {
-                            await petRegister(data, downloadURL)
+                            //await petRegister(data, downloadURL)
+                            await vaccineRegister(data, downloadURL)
                             console.log('downloadURL: ', downloadURL);
                         })
                 }
@@ -94,37 +134,29 @@ const PetRegister = () => {
             console.log('====================================');
             console.log('uploadImage - ', error.message);
             console.log('====================================');
+            setLoading(false)
+
         }
     }
 
-    const petRegister = async (data: Pet, downloadURL: any) => {
+    const vaccineRegister = async (data: any, downloadURL: any) => {
         data.image = downloadURL
-        data.vid = []
-        // NOTE: Add Pet in Firestore
-        const petId = await addPetService(data, uid)
-        data.pid = petId
+        data.startAt = startedAt
+        data.endAt = endsAt
+        const vaccineId = await addVaccineService(data, pId.toString())
+        data.vid = vaccineId.toString()
 
-        // TODO: Update user in Firestore
-        updateUserService({
-            name,
-            email,
-            contactNumber,
-            lastname,
-            uid,
-            petsId: [...petsId, data.pid],
-        })
+        //const pet: any = await getPetService(pId.toString()) || []
+        const pet: any = pets.find(p => p.pid === pId)
+        pet.vid.push(vaccineId.toString()) 
 
-        // FIXME: Add Pet and Update User in Store Managment
-        addPetStore(data as Pet)
-        //pid.push(petId)
-        updateUserStore({
-            uid,
-            name,
-            lastname,
-            email,
-            contactNumber,
-            petsId: [...petsId, data.pid],
-        })
+        console.log('pet ', pet);
+        console.log('pet.id ', pId);
+        console.log('====================================');
+        console.log('====================================');
+
+        await updatePetService(pet, pId)
+        //addVaccine(data as Vaccine)
     }
 
     const handleUploadImage = async () => {
@@ -167,7 +199,7 @@ const PetRegister = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
             <View style={styles.container}>
 
-                <ScreenHeader title={'Pet Register'} />
+                <ScreenHeader title={'Vaccine Register'} />
 
                 <TouchableOpacity
                     style={styles.loginText}
@@ -187,13 +219,10 @@ const PetRegister = () => {
                         <Formik
                             initialValues={{
                                 name: '',
-                                age: '',
-                                gender: '',
-                                weight: '',
-                                breed: '',
-                                color: '',
+                                startAt: '',
+                                endAt: '',
                             }}
-                            validationSchema={ResgisterPetSchema}
+                            validationSchema={ResgisterVaccineSchema}
                             onSubmit={handleSubmitButton}
                         >
                             {({
@@ -212,44 +241,54 @@ const PetRegister = () => {
                                         onBlur={() => setFieldTouched('name')}
                                         autoCapitalize={"none"} />
                                     {errors.name ? (
-                                        <Text style={styles.errorText}>{errors.name}</Text>
+                                        <Text style={styles.errorText}>Hubo un error en el name</Text>
                                     ) : null}
 
-                                    <TextInput placeholder='Age' style={styles.input} value={values.age}
-                                        onChangeText={handleChange('age')}
-                                        onBlur={() => setFieldTouched('age')}
-                                        autoCapitalize={"none"}
-                                    />
+                                    {showPickerStartedAt && (
+                                        <DateTimePicker
+                                            mode='date'
+                                            display='spinner'
+                                            value={startedAt}
+                                            onChange={onChange}
+                                        />
+                                    )}
+                                    {showPickerEndAt && (
+                                        <DateTimePicker
+                                            mode='date'
+                                            display='spinner'
+                                            value={endsAt}
+                                            onChange={onChangeEndsAt}
+                                        />
+                                    )}
+                                    <Pressable onPress={toggleDatePicker} style={styles.input}>
+                                        {showPickerStartedAt && <FontAwesome size={24} name="window-close" color={color} />}
+                                        <TextInput
+                                            placeholder='startAt'
+                                            value={`${!showPickerStartedAt ? 'starAt: ' : ''} ${!showPickerStartedAt ? startedAt.toDateString() : ''}`}
+                                            onChangeText={handleChange('startAt')}
+                                            onBlur={() => setFieldTouched('startAt')}
+                                            autoCapitalize={"none"}
+                                            editable={false}
+                                        />
+                                    </Pressable>
 
-                                    <TextInput placeholder='Gender' style={styles.input} value={values.gender}
-                                        onChangeText={handleChange('gender')}
-                                        onBlur={() => setFieldTouched('gender')}
-                                        autoCapitalize={"none"}
-                                    />
-
-                                    <TextInput placeholder='Weight' style={styles.input} value={values.weight}
-                                        onChangeText={handleChange('weight')}
-                                        onBlur={() => setFieldTouched('weight')}
-                                        autoCapitalize={"none"}
-                                    />
-
-                                    <TextInput placeholder='Breed' style={styles.input} value={values.breed}
-                                        onChangeText={handleChange('breed')}
-                                        onBlur={() => setFieldTouched('breed')}
-                                        autoCapitalize={"none"}
-                                    />
-
-                                    <TextInput placeholder='Color' style={styles.input} value={values.color}
-                                        onChangeText={handleChange('color')}
-                                        onBlur={() => setFieldTouched('color')}
-                                        autoCapitalize={"none"}
-                                    />
+                                    <Pressable onPress={toggleDatePickerEndsAt} style={styles.input}>
+                                        {showPickerEndAt && <FontAwesome size={24} name="window-close" color={color} />}
+                                        <TextInput
+                                            placeholder='endAt'
+                                            value={`${!showPickerEndAt ? 'endAt: ' : ''} ${!showPickerEndAt ? endsAt.toDateString() : ''}`}
+                                            onChangeText={handleChange('endAt')}
+                                            onBlur={() => setFieldTouched('endAt')}
+                                            autoCapitalize={"none"}
+                                            editable={false}
+                                        />
+                                    </Pressable>
 
                                     {loading ? <ActivityIndicator size='large' color='#0000ff' /> :
                                         <>
                                             <CustomButton
                                                 handleOnPress={handleSubmit}
-                                            //title={route.name === 'Pet Register' ? 'Create' : 'Edit'}
+                                                title={'Add'}
                                             />
                                         </>
                                     }
@@ -259,9 +298,9 @@ const PetRegister = () => {
                     </View>
                 </View>
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 
 
-export default PetRegister;
+export default VaccineRegister;

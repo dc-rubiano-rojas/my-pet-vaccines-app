@@ -27,7 +27,11 @@ export default function Index() {
     if (!password) errors.password = 'Password is required'
 
     setErrors(errors);
-    return !!!errors.email && !!!errors.password
+    console.log('====================================');
+    console.log('errors');
+    console.log(errors);
+    console.log('====================================');
+    return !errors.email && !errors.password
   }
 
   const singUp = async () => {
@@ -68,9 +72,14 @@ export default function Index() {
           contactNumber: doc.data().contactNumber,
           petsId: doc.data().petsId
         })
+        
         return doc
       }
     })
+    console.log('====================================');
+    console.log('exist.length > 0');
+    console.log(exist.length > 0);
+    console.log('====================================');
 
     if (exist.length > 0) return true
     return false

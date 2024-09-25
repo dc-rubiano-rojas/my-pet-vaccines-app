@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
+    FlatList,
     RefreshControl,
     SafeAreaView,
     ScrollView,
@@ -10,9 +11,94 @@ import {
 } from 'react-native';
 import ScreenHeader from '@/components/common/header/ScreeanHeader'
 import { COLORS } from '@/constants';
-import styles from '../../styles/home.style';
+import styles from '@/styles/home.style';
+import useUserStore from '@/services/state/zustand/user-store';
+import usePetStore from '@/services/state/zustand/pet-store';
+import { router } from 'expo-router';
+import PetCard from '../../components/pet-card';
+import { getPetService } from '@/services/api/pet-service';
 
 const Page = () => {
+    const [loading, setLoading] = useState(false)
+    const [refreshing, setRefreshing] = useState(false)
+    const [showAddRegister, setShowAddRegister] = useState(false)
+
+    const {
+        name,
+        email,
+        contactNumber,
+        lastname,
+        uid,
+        deleteUser,
+        petsId } = useUserStore()
+
+    const {
+        pets,
+        addPet: addPetStore,
+        reducePets: reducePetsStore,
+        deletePetToEdit
+    } = usePetStore()
+
+    useEffect(() => {
+        if (pets.length <= 0) setShowAddRegister(true)
+        if (pets.length > 0) setShowAddRegister(false)
+    }, [pets])
+
+    const updatePetsData = async () => {
+        
+    }
+
+
+    const onRefresh = async () => {
+        console.log('====================================');
+        console.log('onRefresh');
+        console.log('====================================');
+        setRefreshing(true);
+        reducePetsStore()
+        for await (const petId of petsId) {
+            const pet: any = await getPetService(petId) || []
+            console.log('====================================');
+            console.log('onRefresh - pet');
+            console.log(pet.data().vid);
+            
+            console.log('====================================');
+            addPetStore({
+                pid: petId.toString(),
+                name: pet.data().name || '',
+                age: pet.data().age || '',
+                gender: pet.data().gender || '',
+                weight: pet.data().weight || '',
+                breed: pet.data().breed || '',
+                color: pet.data().color || '',
+                uid: pet.data().uid || '',
+                image: pet.data().image || '',
+                vid: pet.data().vid || []
+            })
+        }
+        setRefreshing(false);
+    }
+
+    const navigatePetEdit = () => router.navigate("./pet-register")
+
+
+    const renderFlatList = () => {
+        return (
+            <FlatList
+                data={pets}
+                renderItem={({ item, index }: any) => <PetCard
+                    pet={item}
+                    index={index}
+                    loading={!pets ? true : false}
+                    navigatePetEdit={navigatePetEdit} />}
+                horizontal={false}
+                showsHorizontalScrollIndicator={true}
+                alwaysBounceHorizontal={false}
+                pagingEnabled={true}
+                style={styles.flatListContainer}
+            />
+        )
+    }
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
 
@@ -20,13 +106,34 @@ const Page = () => {
 
                 <ScreenHeader title={'Home'} />
 
-                <TouchableOpacity style={styles.viewWithoutPets}>
-                    <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} style={styles.textViewWithoutPets} />
-                </TouchableOpacity>
+                <ScrollView refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }>
+
+                    {loading ? <ActivityIndicator size='large' color='#0000ff' /> :
+                        <>
+                            {showAddRegister && (
+                                <TouchableOpacity style={styles.viewWithoutPets} onPress={navigatePetEdit}>
+                                    <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} style={styles.textViewWithoutPets} />
+                                </TouchableOpacity>
+                            )}
+
+                            <View style={styles.flatListContainer}>
+
+                                {pets.length > 0 && renderFlatList()}
+                            </View>
+                        </>
+                    }
+                </ScrollView>
+
+
 
             </View >
         </SafeAreaView>
-    )
+    );
 }
 
 

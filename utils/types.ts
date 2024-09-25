@@ -47,6 +47,7 @@ export type Pet = {
   color: "";
   uid: [""];
   image: "";
+  vid?: string[];
 };
 export type PetDataToManage = {
   pid?: "";

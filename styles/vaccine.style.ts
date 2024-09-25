@@ -1,0 +1,9 @@
+import { StyleSheet } from "react-native";
+
+import { COLORS, FONT, SIZES } from "@/constants";
+
+const styles = StyleSheet.create({
+  page: {},
+});
+
+export default styles;

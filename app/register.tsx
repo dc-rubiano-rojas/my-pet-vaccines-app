@@ -25,14 +25,14 @@ const Register = () => {
     try {
       await auth().createUserWithEmailAndPassword(data.email, data.password)
       const responseCol = await addDoc(collection(FIRESTORE_DB, 'users'), {
-         uid: data.email,
-         email: data.email,
-         name: data.name,
-         lastname: data.lastname,
-         contactNumber: data.contactNumber,
-         password: data.password,
-         petsId: []
-       }) 
+        uid: data.email,
+        email: data.email.toLowerCase(),
+        name: data.name.toLowerCase(),
+        lastname: data.lastname.toLowerCase(),
+        contactNumber: data.contactNumber.toLowerCase(),
+        password: data.password,
+        petsId: []
+      })
       console.log('====================================');
       console.log('responseCol');
       console.log(responseCol);
@@ -46,25 +46,6 @@ const Register = () => {
       setLoading(false)
     }
   }
-  /*  const singUp = async () => {
-     setLoading(true)
- 
-     try {
-       if (!validateForm()) {
-         alert('Must be an error with your email')
-         setLoading(false)
-         return
-       }
- 
-       await auth().createUserWithEmailAndPassword(email, password)
-     } catch (error: any) {
-       const e = error as FirebaseError
-       //console.log(error);
-       alert('Sign in failed: ' + error.message)
-     } finally {
-       setLoading(false)
-     }
-   } */
 
   const ResgisterUserSchema = Yup.object().shape({
     name: Yup.string()
@@ -117,7 +98,8 @@ const Register = () => {
                 style={styles.input}
                 value={values.name}
                 onChangeText={handleChange('name')}
-                onBlur={() => setFieldTouched('name')} />
+                onBlur={() => setFieldTouched('name')}
+                autoCapitalize={"none"} />
               {errors.name ? (
                 <Text style={styles.errorText}>{errors.name}</Text>
               ) : null}
@@ -126,7 +108,9 @@ const Register = () => {
                 style={styles.input}
                 value={values.lastname}
                 onChangeText={handleChange('lastname')}
-                onBlur={() => setFieldTouched('lastname')} />
+                onBlur={() => setFieldTouched('lastname')}
+                autoCapitalize={"none"}
+              />
               {errors.lastname ? (
                 <Text style={styles.errorText}>{errors.lastname}</Text>
               ) : null}
@@ -135,7 +119,10 @@ const Register = () => {
                 style={styles.input}
                 value={values.email}
                 onChangeText={handleChange('email')}
-                onBlur={() => setFieldTouched('email')} />
+                onBlur={() => setFieldTouched('email')}
+                keyboardType="email-address"
+                autoCapitalize={"none"}
+              />
               {errors.email ? (
                 <Text style={styles.errorText}>{errors.email}</Text>
               ) : null}
@@ -144,7 +131,11 @@ const Register = () => {
                 style={styles.input}
                 value={values.confirmEmail}
                 onChangeText={handleChange('confirmEmail')}
-                onBlur={() => setFieldTouched('confirmEmail')} />
+                onBlur={() => setFieldTouched('confirmEmail')}
+                keyboardType="email-address"
+                autoCapitalize={"none"}
+              />
+
               {errors.confirmEmail ? (
                 <Text style={styles.errorText}>{errors.confirmEmail}</Text>
               ) : null}
@@ -153,7 +144,10 @@ const Register = () => {
                 style={styles.input}
                 value={values.password}
                 onChangeText={handleChange('password')}
-                onBlur={() => setFieldTouched('password')} />
+                onBlur={() => setFieldTouched('password')}
+                autoCapitalize={"none"}
+                secureTextEntry
+              />
               {errors.password ? (
                 <Text style={styles.errorText}>{errors.password}</Text>
               ) : null}
@@ -162,7 +156,10 @@ const Register = () => {
                 style={styles.input}
                 value={values.confirmPassword}
                 onChangeText={handleChange('confirmPassword')}
-                onBlur={() => setFieldTouched('confirmPassword')} />
+                onBlur={() => setFieldTouched('confirmPassword')}
+                autoCapitalize={"none"}
+                secureTextEntry
+              />
               {errors.confirmPassword ? (
                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
               ) : null}

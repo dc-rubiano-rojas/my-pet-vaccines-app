@@ -2,28 +2,28 @@ import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } fro
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 import { FIRESTORE_DB } from "@/firebaseConfig";
-import { Pet } from "../../utils/types";
+import { Pet, Vaccine } from "@/utils/types";
 
-export async function addPetService(pet: Pet, uid: string) {
-    const data = await addDoc(collection(FIRESTORE_DB, 'pets'), { ...pet, uid: [uid] })
+export async function addVaccineService(vaccine: Vaccine, pid: string) {
+    const data = await addDoc(collection(FIRESTORE_DB, 'vaccines'), { ...vaccine, pid: pid })
     return data.id
 }
 
-export async function saveImagePetService(pet: Pet, uid: string) {
+export async function saveImageVaccineService(pet: Pet, uid: string) {
 
 }
 
 
-export async function getPetService(pid: string) {
+export async function getVaccineService(vid: string) {
     try {
 
-        const ref = doc(FIRESTORE_DB, `pets/${pid}`)
+        const ref = doc(FIRESTORE_DB, `vaccine/${vid}`)
         const data = await getDoc(ref);
 
         return data
     } catch (error) {
         console.log('====================================');
-        console.log('error - getPetService');
+        console.log('error - getVaccineService');
         console.log(error);
         console.log('====================================');
     }
@@ -31,16 +31,13 @@ export async function getPetService(pid: string) {
 export function getPet(id: string) {
 
 }
-export async function updatePetService(pet: Pet, pid: string) {
+export async function updateVaccineService(vaccine: Vaccine) {
     try {
-        console.log('====================================');
-        console.log('pet service: ', pet);
-        console.log('====================================');
-        const ref = doc(FIRESTORE_DB, `pets/${pid}`)
-        await updateDoc(ref, { ...pet })
+        const ref = doc(FIRESTORE_DB, `vaccine/${vaccine.vid}`)
+        await updateDoc(ref, { ...vaccine })
     } catch (error) {
         console.log('====================================');
-        console.log('error - getPetService');
+        console.log('error - updateVaccineService');
         console.log(error);
         console.log('====================================');
     }

@@ -30,6 +30,14 @@ const Layout = () => {
                     tabBarIcon: ({ color }) => <FontAwesome size={24} name="user-plus" color={color} />,
                 }}
             />
+             <Tabs.Screen
+                name="vaccines"
+                options={{
+                    href: null,
+                    headerShown: false
+                }}
+            /> 
+ 
         </Tabs>
     )
 }

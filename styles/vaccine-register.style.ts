@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 75,
     borderBottomLeftRadius: 75,
     paddingTop: 40,
-    marginBottom: 30,
+    marginBottom: "30%",
+    marginHorizontal: "3%",
   },
   inputsContainer: {
     marginTop: 5,
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     backgroundColor: "#fff",
+    zIndex: 100,
   },
   errorText: {
     color: "red",
@@ -50,6 +52,11 @@ const styles = StyleSheet.create({
     paddingLeft: 3,
     marginTop: 20,
   },
+  cancelDatePicker: {
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+  },
+  flatListContainer: {},
 });
 
 export default styles;

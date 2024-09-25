@@ -78,6 +78,7 @@ const usePetStore = create<PetState & PetAction & PetToEditState>((set) => ({
           color: pet.color,
           uid: pet.uid,
           image: pet.image,
+          vid: pet.vid
         },
       ],
     })),
