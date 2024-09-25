@@ -17,6 +17,8 @@ import usePetStore from '@/services/state/zustand/pet-store';
 import { router } from 'expo-router';
 import PetCard from '../../components/pet-card';
 import { getPetService } from '@/services/api/pet-service';
+import { getVaccineService } from '@/services/api/vaccine.service';
+import useVaccineStore from '@/services/state/zustand/vaccine-store';
 
 const Page = () => {
     const [loading, setLoading] = useState(false)
@@ -39,29 +41,29 @@ const Page = () => {
         deletePetToEdit
     } = usePetStore()
 
+    const { addVaccine, reduceVaccines } = useVaccineStore()
+
+    useEffect(() => {
+        loadData()
+    }, []);
+
     useEffect(() => {
         if (pets.length <= 0) setShowAddRegister(true)
         if (pets.length > 0) setShowAddRegister(false)
     }, [pets])
 
     const updatePetsData = async () => {
-        
+
     }
 
-
-    const onRefresh = async () => {
-        console.log('====================================');
-        console.log('onRefresh');
-        console.log('====================================');
-        setRefreshing(true);
+    const loadData = async () => {
         reducePetsStore()
+        reduceVaccines()
+        console.log('====================================');
+        console.log('===========HOME======================');
+        console.log('===========LOADDATA======================');
         for await (const petId of petsId) {
             const pet: any = await getPetService(petId) || []
-            console.log('====================================');
-            console.log('onRefresh - pet');
-            console.log(pet.data().vid);
-            
-            console.log('====================================');
             addPetStore({
                 pid: petId.toString(),
                 name: pet.data().name || '',
@@ -74,7 +76,22 @@ const Page = () => {
                 image: pet.data().image || '',
                 vid: pet.data().vid || []
             })
+            const { vid: vaccinesIDs } = pet.data()
+            for await (const vId of vaccinesIDs) {
+                const vaccine: any = await getVaccineService(vId.toString()) || []
+                addVaccine({ 
+                    ...vaccine.data(), 
+                    vid: vId.toString(), 
+                    img: vaccine.data().image 
+                })
+            }
         }
+    }
+
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await loadData()
         setRefreshing(false);
     }
 

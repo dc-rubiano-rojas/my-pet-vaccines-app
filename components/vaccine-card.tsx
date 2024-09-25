@@ -5,6 +5,11 @@ import React from 'react';
 import { View } from 'react-native';
 
 const VaccineCard = ({ vaccine, index, loading }: any) => {
+    console.log('====================================');
+    console.log('VaccineCard');
+    console.log(vaccine);
+    
+    console.log('====================================');
     return (
         <View>
             <>

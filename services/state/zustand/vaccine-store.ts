@@ -21,40 +21,6 @@ type VaccineAction = {
   deleteVaccineToEdit: () => void;
 };
 
-// Create your store, which includes both state and (optionally) actions
-/* const useVaccineStore = create<
-  VaccineState & VaccineAction & VaccineToEditState
->((set) => ({
-  vaccines: [],
-
-  vid: "",
-  pid: "",
-  name: "",
-  img: "",
-  startAt: "",
-  endAt: "",
-
-  addVaccineToEdit: (vaccine: Vaccine) =>
-    set((state) => ({
-      vid: vaccine.vid,
-      pid: vaccine.pid,
-      name: vaccine.name,
-      img: vaccine.img,
-      startAt: vaccine.startAt,
-      endAt: vaccine.endAt,
-    })),
-
-  deletePetToEdit: () =>
-    set((state) => ({
-      vid: "",
-      pid: "",
-      name: "",
-      img: "",
-      startAt: "",
-      endAt: "",
-    })),
-})); */
-
 const useVaccineStore = create<
   VaccineState & VaccineAction & VaccineToEditState
 >((set) => ({

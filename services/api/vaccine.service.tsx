@@ -17,7 +17,7 @@ export async function saveImageVaccineService(pet: Pet, uid: string) {
 export async function getVaccineService(vid: string) {
     try {
 
-        const ref = doc(FIRESTORE_DB, `vaccine/${vid}`)
+        const ref = doc(FIRESTORE_DB, `vaccines/${vid}`)
         const data = await getDoc(ref);
 
         return data

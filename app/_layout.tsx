@@ -4,12 +4,19 @@ import { View, ActivityIndicator } from "react-native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import ScreeanHeader from '../components/common/header/ScreeanHeader';
+import useUserStore from "@/services/state/zustand/user-store";
+import usePetStore from "@/services/state/zustand/pet-store";
+import useVaccineStore from "@/services/state/zustand/vaccine-store";
+import { deletePet } from '../services/api/vaccine.service';
 
 export default function RootLayout() {
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
   const router = useRouter()
   const segments = useSegments()
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
+  const { deleteUser } = useUserStore()
+  const { reducePets } = usePetStore()
+  const { reduceVaccines } = useVaccineStore()
 
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     console.log('onAuthStateChanged: ', user);
@@ -28,6 +35,9 @@ export default function RootLayout() {
     if (user && !inAuthGroup) {
       router.replace('/(auth)/home')
     } else if (!user && inAuthGroup) {
+      deleteUser()
+      reducePets()
+      reduceVaccines()
       router.replace('/')
     }
   }, [user, initializing]);

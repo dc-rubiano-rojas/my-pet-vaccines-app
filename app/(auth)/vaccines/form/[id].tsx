@@ -156,7 +156,7 @@ const VaccineRegister = () => {
         console.log('====================================');
 
         await updatePetService(pet, pId.toString())
-        //addVaccine(data as Vaccine)
+        addVaccine(data as Vaccine)
     }
 
     const handleUploadImage = async () => {

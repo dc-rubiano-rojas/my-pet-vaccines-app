@@ -20,14 +20,16 @@ const ModalVaccines = () => {
         vaccines,
     } = useVaccineStore()
 
-    const { id } = useLocalSearchParams()
+    const { id: pId } = useLocalSearchParams()
 
     useEffect(() => {
-        
+
+        const petVaccines = vaccines.filter(v => v.pid === pId)
         console.log('====================================');
-        console.log('id: ', id);
+        console.log('VACCINES: ', vaccines.length);
+        console.log('petVaccines: ', petVaccines.length);
         console.log('====================================');
-    }, []);
+    }, [vaccines]);
 
     const navigatePetEdit = () => router.navigate("./pet-register")
 
@@ -36,7 +38,7 @@ const ModalVaccines = () => {
             <FlatList
                 data={vaccines}
                 renderItem={({ item, index }: any) => <VaccineCard
-                    pet={item}
+                    vaccine={item}
                     index={index}
                     loading={!vaccines ? true : false}
                     navigatePetEdit={navigatePetEdit} />}
@@ -61,7 +63,7 @@ const ModalVaccines = () => {
 
 
 
-                <TouchableOpacity style={styles.viewWithoutPets} onPress={() => router.push(`/vaccines/form/${id}`)}>
+                <TouchableOpacity style={styles.viewWithoutPets} onPress={() => router.push(`/vaccines/form/${pId}`)}>
                     <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} />
                 </TouchableOpacity>
 

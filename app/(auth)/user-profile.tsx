@@ -10,13 +10,16 @@ import styles from '@/styles/user-profile.style';
 import { Formik } from 'formik';
 import CustomButton from '@/components/common/buttons/CustomButton';
 import useUserStore from '@/services/state/zustand/user-store';
+import usePetStore from '@/services/state/zustand/pet-store';
+import useVaccineStore from '@/services/state/zustand/vaccine-store';
 
 const UserProfile = () => {
   const user = auth().currentUser
 
   const [loading, setLoading] = useState(false);
-  const {name, lastname, email, contactNumber} = useUserStore()
-
+  const {name, lastname, email, contactNumber, deleteUser} = useUserStore()
+  const { reducePets } = usePetStore()
+  const { reduceVaccines } = useVaccineStore()
 
   const UserSchemaValidation = Yup.object().shape({
     name: Yup.string()
@@ -30,6 +33,9 @@ const UserProfile = () => {
     try {
       //await updateUserService(data)
       //showToast(ToastType.success, 'Usuario has been updated', 'Succesfully!')
+      deleteUser()
+      reducePets()
+      reduceVaccines()
     } catch (error) {
       //showToast(ToastType.error, 'There is an error to update', 'Contact client service!')
     } finally {
