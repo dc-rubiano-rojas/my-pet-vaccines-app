@@ -76,15 +76,6 @@ const Page = () => {
                 image: pet.data().image || '',
                 vid: pet.data().vid || []
             })
-            const { vid: vaccinesIDs } = pet.data()
-            for await (const vId of vaccinesIDs) {
-                const vaccine: any = await getVaccineService(vId.toString()) || []
-                addVaccine({ 
-                    ...vaccine.data(), 
-                    vid: vId.toString(), 
-                    img: vaccine.data().image 
-                })
-            }
         }
     }
 
@@ -112,6 +103,12 @@ const Page = () => {
                 alwaysBounceHorizontal={false}
                 pagingEnabled={true}
                 style={styles.flatListContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
             />
         )
     }
@@ -123,30 +120,19 @@ const Page = () => {
 
                 <ScreenHeader title={'Home'} />
 
-                <ScrollView refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }>
+                {loading ? <ActivityIndicator size='large' color='#0000ff' /> :
+                    <>
+                        {showAddRegister && (
+                            <TouchableOpacity style={styles.viewWithoutPets} onPress={navigatePetEdit}>
+                                <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} style={styles.textViewWithoutPets} />
+                            </TouchableOpacity>
+                        )}
 
-                    {loading ? <ActivityIndicator size='large' color='#0000ff' /> :
-                        <>
-                            {showAddRegister && (
-                                <TouchableOpacity style={styles.viewWithoutPets} onPress={navigatePetEdit}>
-                                    <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} style={styles.textViewWithoutPets} />
-                                </TouchableOpacity>
-                            )}
-
-                            <View style={styles.flatListContainer}>
-
-                                {pets.length > 0 && renderFlatList()}
-                            </View>
-                        </>
-                    }
-                </ScrollView>
-
-
+                        <View style={styles.flatListContainer}>
+                            {pets.length > 0 && renderFlatList()}
+                        </View>
+                    </>
+                }
 
             </View >
         </SafeAreaView>

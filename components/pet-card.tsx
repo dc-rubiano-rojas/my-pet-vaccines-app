@@ -15,6 +15,8 @@ import usePetStore from '../services/state/zustand/pet-store';
 import { FontAwesome6 } from '@expo/vector-icons';
 import CustomButton from '@/components/common/buttons/CustomButton';
 import { Link, router } from 'expo-router';
+import useVaccineStore from '@/services/state/zustand/vaccine-store';
+import { getVaccineService } from '@/services/api/vaccine.service';
 interface RouterProps {
     navigation: NavigationProp<any, any>;
     pet: any,
@@ -23,12 +25,17 @@ interface RouterProps {
 }
 
 const PetCard = ({ pet, index, loading }: any) => {
+    const [showSpinner, setShowSpinner] = useState(false);
     const navigation = useNavigation();
     const {
         addPet: addPetStore,
         addPetToEdit,
+        pets
     } = usePetStore()
-
+    const {
+        addVaccine,
+        reduceVaccines
+    } = useVaccineStore()
 
     const handleEditButton = async () => {
         console.log('====================================');
@@ -51,10 +58,39 @@ const PetCard = ({ pet, index, loading }: any) => {
         console.log('====================================');
     }, [])
 
+    const loadVaccines = async () => {
+        reduceVaccines()
+        for await (const vid of pet.vid) {
+            const vaccine: any = await getVaccineService(vid) || []
+            console.log('====================================');
+            console.log('loadVaccines - ', vaccine.data());
+            console.log('====================================');
+            addVaccine({
+                ...vaccine.data(),
+                vid: vid.toString(),
+                img: vaccine.data().image
+            })
+        }
+
+    }
+
+    const routeToVaccines = async () => {
+        setShowSpinner(true)
+        try {
+            await loadVaccines()
+            router.push(`/vaccines/${pet.pid}`)
+        } catch (error) {
+            console.log('====================================');
+            console.log();
+            console.log('====================================');
+        } finally {
+            setShowSpinner(false)
+        }
+    }
+
     return (
         <View>
             <>
-
                 <View key={index} style={styles.page} >
                     <View style={styles.pageTitle}>
                         <FontAwesome6 name='bone' color={COLORS.primary} size={40} />
@@ -73,7 +109,7 @@ const PetCard = ({ pet, index, loading }: any) => {
 
                     <TouchableOpacity
                         style={styles.imageContainer}
-                        onPress={() => navigation.navigate('Vaccines' as never)}>
+                        onPress={routeToVaccines}>
                         <Image source={{ uri: pet.image }}
                             resizeMode='cover'
                             style={{
@@ -101,16 +137,19 @@ const PetCard = ({ pet, index, loading }: any) => {
                             title={'Edit'}
                         />
 
-                        <CustomButton
-                            handleOnPress={() => router.push(`/vaccines/${pet.pid}`)}
-                            title={'Vaccines'}
-                        />
+                        {showSpinner ?
+                            <ActivityIndicator size='large' color='#0000ff' /> :
+                            <CustomButton
+                                handleOnPress={routeToVaccines}
+                                title={'Vaccines'}
+                            />
+                        }
+
+
                     </View>
                 </View>
 
             </>
-
-
         </View >
     )
 }

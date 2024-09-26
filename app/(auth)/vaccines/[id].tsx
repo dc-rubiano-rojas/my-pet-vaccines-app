@@ -22,7 +22,7 @@ const ModalVaccines = () => {
 
     const { id: pId } = useLocalSearchParams()
 
-    useEffect(() => {
+/*     useEffect(() => {
 
         const petVaccines = vaccines.filter(v => v.pid === pId)
         console.log('====================================');
@@ -30,7 +30,7 @@ const ModalVaccines = () => {
         console.log('petVaccines: ', petVaccines.length);
         console.log('====================================');
     }, [vaccines]);
-
+ */
     const navigatePetEdit = () => router.navigate("./pet-register")
 
     const renderFlatList = () => {
@@ -42,7 +42,6 @@ const ModalVaccines = () => {
                     index={index}
                     loading={!vaccines ? true : false}
                     navigatePetEdit={navigatePetEdit} />}
-                horizontal={false}
                 showsHorizontalScrollIndicator={true}
                 alwaysBounceHorizontal={false}
                 pagingEnabled={true}
@@ -54,8 +53,11 @@ const ModalVaccines = () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
             <View style={styles.container}>
-                <ScreenHeader title={'Vaccines Register'} />
+                <ScreenHeader title={'Vaccines'} />
 
+                <TouchableOpacity style={styles.viewWithoutPets} onPress={() => router.push(`/vaccines/form/${pId}`)}>
+                    <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} />
+                </TouchableOpacity>
                 <View style={styles.flatListContainer}>
 
                     {vaccines.length > 0 && renderFlatList()}
@@ -63,9 +65,6 @@ const ModalVaccines = () => {
 
 
 
-                <TouchableOpacity style={styles.viewWithoutPets} onPress={() => router.push(`/vaccines/form/${pId}`)}>
-                    <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} />
-                </TouchableOpacity>
 
             </View>
 
