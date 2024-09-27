@@ -86,21 +86,25 @@ const Page = () => {
         setRefreshing(false);
     }
 
-    const navigatePetEdit = () => router.navigate("./pet-register")
+    const navigatePetRegister = () => {
+        router.push('/(auth)/pet-register')
+    }
 
 
     const renderFlatList = () => {
         return (
             <FlatList
                 data={pets}
-                renderItem={({ item, index }: any) => <PetCard
-                    pet={item}
-                    index={index}
-                    loading={!pets ? true : false}
-                    navigatePetEdit={navigatePetEdit} />}
+                renderItem={({ item, index }: any) =>
+                    <PetCard
+                        pet={item}
+                        index={index}
+                        loading={!pets ? true : false}
+                    />}
                 horizontal={false}
                 showsHorizontalScrollIndicator={true}
                 alwaysBounceHorizontal={false}
+                alwaysBounceVertical={false}
                 pagingEnabled={true}
                 style={styles.flatListContainer}
                 refreshControl={
@@ -123,7 +127,7 @@ const Page = () => {
                 {loading ? <ActivityIndicator size='large' color='#0000ff' /> :
                     <>
                         {showAddRegister && (
-                            <TouchableOpacity style={styles.viewWithoutPets} onPress={navigatePetEdit}>
+                            <TouchableOpacity style={styles.viewWithoutPets} onPress={navigatePetRegister}>
                                 <Ionicons name='add-circle-outline' color={COLORS.primary} size={40} style={styles.textViewWithoutPets} />
                             </TouchableOpacity>
                         )}

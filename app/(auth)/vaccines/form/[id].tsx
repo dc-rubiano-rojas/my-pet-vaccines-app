@@ -141,8 +141,8 @@ const VaccineRegister = () => {
 
     const vaccineRegister = async (data: any, downloadURL: any) => {
         data.image = downloadURL
-        data.startAt = startedAt
-        data.endAt = endsAt
+        data.startAt = startedAt.toString()
+        data.endAt = endsAt.toString()
         const vaccineId = await addVaccineService(data, pId.toString())
         data.vid = vaccineId.toString()
 

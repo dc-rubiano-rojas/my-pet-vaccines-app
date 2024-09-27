@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
   textTitle: {
     fontSize: SIZES.xxLarge,
     paddingHorizontal: 20,
+    
   },
   pagerView: {
     flex: 1,

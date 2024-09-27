@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import React, { useEffect, useState } from 'react'
+import { Link, router } from 'expo-router';
 
 import styles from '@/styles/MyPet.style'
 import { COLORS, images } from '../constants'
@@ -14,7 +15,6 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import usePetStore from '../services/state/zustand/pet-store';
 import { FontAwesome6 } from '@expo/vector-icons';
 import CustomButton from '@/components/common/buttons/CustomButton';
-import { Link, router } from 'expo-router';
 import useVaccineStore from '@/services/state/zustand/vaccine-store';
 import { getVaccineService } from '@/services/api/vaccine.service';
 interface RouterProps {
@@ -38,33 +38,14 @@ const PetCard = ({ pet, index, loading }: any) => {
     } = useVaccineStore()
 
     const handleEditButton = async () => {
-        console.log('====================================');
-        console.log('click EditButton');
-        console.log('====================================');
         addPetToEdit(pet)
-        //navigation.setOptions({ pet } as any)
-        //navigation.setParams(pet)
-        navigation.navigate('Pet Edit' as never)
+        router.navigate("./pet-register")
     }
-    /*     console.log('====================================');
-        console.log('PetCard');
-        console.log(pet);
-        console.log('===================================='); */
-
-    useEffect(() => {
-        console.log('====================================');
-        console.log('PET CARD USEEFFECT');
-        console.log(pet.image);
-        console.log('====================================');
-    }, [])
 
     const loadVaccines = async () => {
         reduceVaccines()
         for await (const vid of pet.vid) {
             const vaccine: any = await getVaccineService(vid) || []
-            console.log('====================================');
-            console.log('loadVaccines - ', vaccine.data());
-            console.log('====================================');
             addVaccine({
                 ...vaccine.data(),
                 vid: vid.toString(),
@@ -75,15 +56,15 @@ const PetCard = ({ pet, index, loading }: any) => {
     }
 
     const routeToVaccines = async () => {
-        setShowSpinner(true)
         try {
+            setShowSpinner(true)
             await loadVaccines()
             router.push(`/vaccines/${pet.pid}`)
         } catch (error) {
             console.log('====================================');
-            console.log();
-            console.log('====================================');
+            console.log('PetCard - routeToVaccines: ', error);
         } finally {
+            console.log('====================================');
             setShowSpinner(false)
         }
     }

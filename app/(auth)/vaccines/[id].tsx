@@ -42,9 +42,10 @@ const ModalVaccines = () => {
                     index={index}
                     loading={!vaccines ? true : false}
                     navigatePetEdit={navigatePetEdit} />}
-                showsHorizontalScrollIndicator={true}
+                showsVerticalScrollIndicator={true}
                 alwaysBounceHorizontal={false}
-                pagingEnabled={true}
+                alwaysBounceVertical={false}
+                pagingEnabled={false}
                 style={styles.flatListContainer}
             />
         )

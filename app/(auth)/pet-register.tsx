@@ -1,5 +1,7 @@
 import { COLORS } from '@/constants';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import * as ImagePicker from 'expo-image-picker'
+import { router } from 'expo-router';
 import {
     SafeAreaView,
     StyleSheet,
@@ -17,7 +19,6 @@ import * as Yup from 'yup';
 import ScreenHeader from '@/components/common/header/ScreeanHeader'
 import styles from '@/styles/pet-register.style';
 import { Entypo } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker'
 import { FIREBASE_STORAGE } from '@/firebaseConfig';
 import CustomButton from '@/components/common/buttons/CustomButton';
 import useUserStore from '@/services/state/zustand/user-store';
@@ -48,6 +49,10 @@ const PetRegister = () => {
         image: petImage
     } = usePetStore()
     const [image, setImage] = useState(petImage ? petImage : '')
+
+    useEffect(() => {
+
+    }, []);
 
     const ResgisterPetSchema = Yup.object().shape({
         name: Yup.string()

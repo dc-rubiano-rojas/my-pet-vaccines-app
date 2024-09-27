@@ -31,19 +31,32 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
-  pageTitle: {
+  pageTitleContainer: {
     flex: 1,
     flexDirection: "row",
+    paddingTop: 10,
+    flexGrow: 1,
   },
   textTitle: {
     fontSize: SIZES.large,
     paddingLeft: 10,
-    paddingTop: 5
+    paddingTop: 5,
+    fontWeight: '600'
   },
   virusIcon: {
     paddingTop: 5,
-    paddingLeft: 5
-  }
+    paddingLeft: 5,
+  },
+  pageBodyContainer: {
+    flex: 1,
+    flexDirection: "column",
+    flexGrow: 4
+  },
+  textDates: {
+    fontSize: SIZES.medium,
+    marginLeft: 10,
+    marginTop: 10,
+  },
 });
 
 export default styles;

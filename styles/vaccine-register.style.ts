@@ -56,7 +56,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     justifyContent: "flex-end",
   },
-  flatListContainer: {},
+  flatListContainer: {
+    height: '100%'
+  },
 });
 
 export default styles;
