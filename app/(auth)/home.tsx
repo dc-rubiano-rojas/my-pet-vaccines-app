@@ -87,7 +87,7 @@ const Page = () => {
     }
 
     const navigatePetRegister = () => {
-        router.push('/(auth)/pet-register')
+        router.push('/register')
     }
 
 
@@ -101,7 +101,7 @@ const Page = () => {
                         index={index}
                         loading={!pets ? true : false}
                     />}
-                horizontal={false}
+                horizontal
                 showsHorizontalScrollIndicator={true}
                 alwaysBounceHorizontal={false}
                 alwaysBounceVertical={false}

@@ -1,7 +1,7 @@
 import { COLORS } from '@/constants';
 import React, { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker'
-import { router } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import {
     SafeAreaView,
     StyleSheet,
@@ -29,6 +29,7 @@ import { Pet } from '@/utils/types';
 
 const PetRegister = () => {
     const [loading, setLoading] = useState(false);
+    const [petToEdit, setPetToEdit] = useState<Pet | null>(null);
     const {
         name,
         email,
@@ -39,20 +40,24 @@ const PetRegister = () => {
         updateUser: updateUserStore
     } = useUserStore()
     const {
-        addPet: addPetStore,
-        name: petName,
-        age,
-        gender,
-        weight,
-        breed,
-        color,
-        image: petImage
+        image: petImage,
+        pets,
+        addPet: addPetStore
     } = usePetStore()
-    const [image, setImage] = useState(petImage ? petImage : '')
+    const [image, setImage] = useState('')
 
-    useEffect(() => {
-
-    }, []);
+/*     const { id: pId } = useLocalSearchParams()
+ */
+ /*    useEffect(() => {
+        console.log('====================================');
+        console.log('PET USE EFFECT REGISTER', pId);
+        console.log('====================================');
+        if (!pId) setPetToEdit(null)
+        setPetToEdit(pets.filter(p => p.pid === pId.toString())[0])
+        console.log('====================================');
+        console.log(petToEdit);
+        console.log('====================================');
+    }, [pId]); */
 
     const ResgisterPetSchema = Yup.object().shape({
         name: Yup.string()
@@ -174,6 +179,7 @@ const PetRegister = () => {
 
                 <ScreenHeader title={'Pet Register'} />
 
+
                 <TouchableOpacity
                     style={styles.loginText}
                     onPress={() => handleUploadImage()}
@@ -191,7 +197,7 @@ const PetRegister = () => {
                     <View style={styles.inputsContainer}>
                         <Formik
                             initialValues={{
-                                name: '',
+                                name: petToEdit?.name,
                                 age: '',
                                 gender: '',
                                 weight: '',
@@ -217,7 +223,7 @@ const PetRegister = () => {
                                         onBlur={() => setFieldTouched('name')}
                                         autoCapitalize={"none"} />
                                     {errors.name ? (
-                                        <Text style={styles.errorText}>{errors.name}</Text>
+                                        <Text style={styles.errorText}>{errors?.name}</Text>
                                     ) : null}
 
                                     <TextInput placeholder='Age' style={styles.input} value={values.age}

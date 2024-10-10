@@ -22,16 +22,15 @@ const ModalVaccines = () => {
 
     const { id: pId } = useLocalSearchParams()
 
-/*     useEffect(() => {
-
-        const petVaccines = vaccines.filter(v => v.pid === pId)
-        console.log('====================================');
-        console.log('VACCINES: ', vaccines.length);
-        console.log('petVaccines: ', petVaccines.length);
-        console.log('====================================');
-    }, [vaccines]);
- */
-    const navigatePetEdit = () => router.navigate("./pet-register")
+    /*     useEffect(() => {
+    
+            const petVaccines = vaccines.filter(v => v.pid === pId)
+            console.log('====================================');
+            console.log('VACCINES: ', vaccines.length);
+            console.log('petVaccines: ', petVaccines.length);
+            console.log('====================================');
+        }, [vaccines]);
+     */
 
     const renderFlatList = () => {
         return (
@@ -41,7 +40,7 @@ const ModalVaccines = () => {
                     vaccine={item}
                     index={index}
                     loading={!vaccines ? true : false}
-                    navigatePetEdit={navigatePetEdit} />}
+                />}
                 showsVerticalScrollIndicator={true}
                 alwaysBounceHorizontal={false}
                 alwaysBounceVertical={false}

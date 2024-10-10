@@ -41,6 +41,13 @@ const Layout = () => {
                     headerShown: false
                 }}
             />
+            <Tabs.Screen
+                name="pet-edit"
+                options={{
+                    href: null,
+                    headerShown: false,
+                }}
+            />
         </Tabs>
     )
 }

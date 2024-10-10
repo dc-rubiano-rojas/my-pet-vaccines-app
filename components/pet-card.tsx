@@ -30,16 +30,25 @@ const PetCard = ({ pet, index, loading }: any) => {
     const {
         addPet: addPetStore,
         addPetToEdit,
+        deletePetToEdit,
         pets
     } = usePetStore()
     const {
         addVaccine,
-        reduceVaccines
+        reduceVaccines,
     } = useVaccineStore()
 
     const handleEditButton = async () => {
-        addPetToEdit(pet)
-        router.navigate("./pet-register")
+        //deletePetToEdit()
+        //addPetToEdit(pet)
+        //router.setParams({ id: pet.pid })
+        console.log('====================================');
+        console.log('handleEditButton');
+        console.log('====================================');
+        const petToEditconst =  pets.filter(p => p.pid === pet.pid.toString())[0]
+
+        addPetToEdit(petToEditconst)
+        router.push(`/(auth)/pet-edit/${pet.pid}`)
     }
 
     const loadVaccines = async () => {
